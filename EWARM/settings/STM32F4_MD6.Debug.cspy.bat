@@ -25,7 +25,7 @@ if not "%~1" == "" goto debugFile
 
 @echo on 
 
-"G:\Program Files (x86)\IAR Systems\Embedded Workbench 8.3\common\bin\cspybat" -f "F:\personal-workspace\eMD6\EWARM\settings\STM32F4_MD6.Debug.general.xcl" --backend -f "F:\personal-workspace\eMD6\EWARM\settings\STM32F4_MD6.Debug.driver.xcl" 
+"G:\Program Files (x86)\IAR Systems\Embedded Workbench 8.3\common\bin\cspybat" -f "F:\personal-workspace\UE4Projects\DreamTravelHardware_STM32\EWARM\settings\STM32F4_MD6.Debug.general.xcl" --backend -f "F:\personal-workspace\UE4Projects\DreamTravelHardware_STM32\EWARM\settings\STM32F4_MD6.Debug.driver.xcl" 
 
 @echo off 
 goto end 
@@ -34,7 +34,7 @@ goto end
 
 @echo on 
 
-"G:\Program Files (x86)\IAR Systems\Embedded Workbench 8.3\common\bin\cspybat" -f "F:\personal-workspace\eMD6\EWARM\settings\STM32F4_MD6.Debug.general.xcl" "--debug_file=%~1" --backend -f "F:\personal-workspace\eMD6\EWARM\settings\STM32F4_MD6.Debug.driver.xcl" 
+"G:\Program Files (x86)\IAR Systems\Embedded Workbench 8.3\common\bin\cspybat" -f "F:\personal-workspace\UE4Projects\DreamTravelHardware_STM32\EWARM\settings\STM32F4_MD6.Debug.general.xcl" "--debug_file=%~1" --backend -f "F:\personal-workspace\UE4Projects\DreamTravelHardware_STM32\EWARM\settings\STM32F4_MD6.Debug.driver.xcl" 
 
 @echo off 
 :end

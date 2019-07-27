@@ -23,9 +23,9 @@
 
 if ($debugfile -eq "")
 {
-& "G:\Program Files (x86)\IAR Systems\Embedded Workbench 8.3\common\bin\cspybat" -f "F:\personal-workspace\eMD6\EWARM\settings\STM32F4_MD6.Debug.general.xcl" --backend -f "F:\personal-workspace\eMD6\EWARM\settings\STM32F4_MD6.Debug.driver.xcl" 
+& "G:\Program Files (x86)\IAR Systems\Embedded Workbench 8.3\common\bin\cspybat" -f "F:\personal-workspace\UE4Projects\DreamTravelHardware_STM32\EWARM\settings\STM32F4_MD6.Debug.general.xcl" --backend -f "F:\personal-workspace\UE4Projects\DreamTravelHardware_STM32\EWARM\settings\STM32F4_MD6.Debug.driver.xcl" 
 }
 else
 {
-& "G:\Program Files (x86)\IAR Systems\Embedded Workbench 8.3\common\bin\cspybat" -f "F:\personal-workspace\eMD6\EWARM\settings\STM32F4_MD6.Debug.general.xcl" --debug_file=$debugfile --backend -f "F:\personal-workspace\eMD6\EWARM\settings\STM32F4_MD6.Debug.driver.xcl" 
+& "G:\Program Files (x86)\IAR Systems\Embedded Workbench 8.3\common\bin\cspybat" -f "F:\personal-workspace\UE4Projects\DreamTravelHardware_STM32\EWARM\settings\STM32F4_MD6.Debug.general.xcl" --debug_file=$debugfile --backend -f "F:\personal-workspace\UE4Projects\DreamTravelHardware_STM32\EWARM\settings\STM32F4_MD6.Debug.driver.xcl" 
 }

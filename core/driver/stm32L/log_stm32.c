@@ -111,26 +111,20 @@ void eMPL_send_quat(long *quat)
     if (!quat)
         return;
     memset(out, 0, PACKET_LENGTH);
-    out[0] = '$';
-    out[1] = PACKET_QUAT;
-    out[3] = (char)(quat[0] >> 24);
-    out[4] = (char)(quat[0] >> 16);
-    out[5] = (char)(quat[0] >> 8);
-    out[6] = (char)quat[0];
-    out[7] = (char)(quat[1] >> 24);
-    out[8] = (char)(quat[1] >> 16);
-    out[9] = (char)(quat[1] >> 8);
-    out[10] = (char)quat[1];
-    out[11] = (char)(quat[2] >> 24);
-    out[12] = (char)(quat[2] >> 16);
-    out[13] = (char)(quat[2] >> 8);
-    out[14] = (char)quat[2];
-    out[15] = (char)(quat[3] >> 24);
-    out[16] = (char)(quat[3] >> 16);
-    out[17] = (char)(quat[3] >> 8);
-    out[18] = (char)quat[3];
-    out[21] = '\r';
-    out[22] = '\n';
+    out[0] = 88;
+    out[1] = 88;
+    // out[0] = '$';
+    // out[1] = PACKET_QUAT;
+    out[2] = (char)(quat[0] >> 24);
+    out[3] = (char)(quat[0] >> 16);
+    out[4] = (char)(quat[1] >> 24);
+    out[5] = (char)(quat[1] >> 16);
+    out[6] = (char)(quat[2] >> 24);
+    out[7] = (char)(quat[2] >> 16);
+    out[8] = (char)(quat[3] >> 24);
+    out[9] = (char)(quat[3] >> 16);
+    out[10] = 44;
+    out[11] = 44;
     
     for (i=0; i<PACKET_LENGTH; i++) {
       fputc(out[i]);

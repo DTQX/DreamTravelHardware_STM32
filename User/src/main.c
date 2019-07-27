@@ -862,13 +862,6 @@ int main(void)
     
     unsigned long sensor_timestamp;
     int new_data = 0;
-    if (USART_GetITStatus(USART2, USART_IT_RXNE)) {
-        /* A byte has been received via USART. See handle_input for a list of
-         * valid commands.
-         */
-        USART_ClearITPendingBit(USART2, USART_IT_RXNE);
-        handle_input();
-    }
     get_tick_count(&timestamp);
 
 #ifdef COMPASS_ENABLED
