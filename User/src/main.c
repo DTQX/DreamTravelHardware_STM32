@@ -26,6 +26,9 @@
 #include "mpu.h"
 #include "log.h"
 #include "packet.h"
+
+#include "fusion.h"
+
 /* Private typedef -----------------------------------------------------------*/
 /* Data read from MPL. */
 #define PRINT_ACCEL     (0x01)
@@ -56,6 +59,18 @@ volatile uint32_t hal_timestamp = 0;
 #define PEDO_READ_MS    (1000)
 #define TEMP_READ_MS    (500)
 #define COMPASS_READ_MS (100)
+
+// other_fusion
+float ax, ay, az, gx, gy, gz, mx, my, mz; // variables to hold latest sensor data values 
+float aRes = 1.0/32768.0, gRes = 1.0/32768.0, mRes = 1.0/32768.0; // scale resolutions per LSB for the sensors
+int16_t accelCount[3];  // Stores the 16-bit signed accelerometer sensor output
+int16_t gyroCount[3];   // Stores the 16-bit signed gyro sensor output
+int16_t magCount[3];    // Stores the 16-bit signed magnetometer sensor output
+#define PI 3.1415
+float qt[4];
+
+
+
 struct rx_s {
     unsigned char header[3];
     unsigned char cmd;
@@ -136,6 +151,73 @@ static struct platform_data_s compass_pdata = {
  * TODO: Add return values to the inv_get_sensor_type_xxx APIs to differentiate
  * between new and stale data.
  */
+
+
+void float_char(float f,unsigned char *s)
+{
+    union change
+    {
+        float d;
+        unsigned char dat[4];
+    }rs;
+    rs.d = f;
+    *s = rs.dat[0];
+    *(s+1) = rs.dat[1];
+    *(s+2) = rs.dat[2];
+    *(s+3) = rs.dat[3];
+}
+
+void my_send(long *quat){
+    unsigned char out[28];
+    int i;
+    if (!quat)
+        return;
+    memset(out, 0, 28);
+    out[0] = 88;
+    out[1] = 88;
+    // out[0] = '$';
+    // out[1] = PACKET_QUAT;
+    out[2] = (unsigned char)(quat[0] >> 24);
+    out[3] = (unsigned char)(quat[0] >> 16);
+    out[4] = (unsigned char)(quat[1] >> 24);
+    out[5] = (unsigned char)(quat[1] >> 16);
+    out[6] = (unsigned char)(quat[2] >> 24);
+    out[7] = (unsigned char)(quat[2] >> 16);
+    out[8] = (unsigned char)(quat[3] >> 24);
+    out[9] = (unsigned char)(quat[3] >> 16);
+    
+
+    uint8_t tmp[4];
+    float_char(qt[0], tmp);
+    out[10] = tmp[0];
+    out[11] = tmp[1];
+    out[12] = tmp[2];
+    out[13] = tmp[3];
+    float_char(qt[1], tmp);
+    out[14] = tmp[0];
+    out[15] = tmp[1];
+    out[16] = tmp[2];
+    out[17] = tmp[3];
+    float_char(qt[2], tmp);
+    out[18] = tmp[0];
+    out[19] = tmp[1];
+    out[20] = tmp[2];
+    out[21] = tmp[3];
+    float_char(qt[3], tmp);
+    out[22] = tmp[0];
+    out[23] = tmp[1];
+    out[24] = tmp[2];
+    out[25] = tmp[3];
+
+
+    out[26] = 44;
+    out[27] = 44;
+    
+    for (i=0; i< 28; i++) {
+      fputc(out[i]);
+    }
+}
+
 static void read_from_mpl(void)
 {
     long msg, data[9];
@@ -148,7 +230,8 @@ static void read_from_mpl(void)
         * test app to visually represent a 3D quaternion, it's sent each time
         * the MPL has new data.
         */
-        eMPL_send_quat(data);
+        // eMPL_send_quat(data);
+        my_send(data);
 
     }
 
@@ -293,6 +376,42 @@ void gyro_data_ready_cb(void)
     hal.new_gyro = 1;
 }
 /*******************************************************************************/
+
+void other_fusion(){
+    // If intPin goes high or data ready status is TRUE, all data registers have new data
+    
+    // Now we'll calculate the accleration value into actual g's
+    ax = (float)accelCount[0]*aRes;  // get actual g value, this depends on scale being set
+    ay = (float)accelCount[1]*aRes;   
+    az = (float)accelCount[2]*aRes;    
+   
+ 
+    // Calculate the gyro value into actual degrees per second
+    gx = (float)gyroCount[0]*gRes;  // get actual gyro value, this depends on scale being set
+    gy = (float)gyroCount[1]*gRes;  
+    gz = (float)gyroCount[2]*gRes;   
+ 
+  
+    // Calculate the magnetometer values in milliGauss
+    // Include factory calibration per data sheet and user environmental corrections
+    mx = (float)magCount[0]*mRes;  // get actual magnetometer value, this depends on scale being set
+    my = (float)magCount[1]*mRes;  
+    mz = (float)magCount[2]*mRes;   
+    
+    //   deltat = 1.0/50.0; // set integration time by time elapsed since last filter update
+
+  // Sensors x (y)-axis of the accelerometer is aligned with the y (x)-axis of the magnetometer;
+  // the magnetometer z-axis (+ down) is opposite to z-axis (+ up) of accelerometer and gyro!
+  // We have to make some allowance for this orientation mismatch in feeding the output to the quaternion filter.
+  // For the MPU-9150, we have chosen a magnetic rotation that keeps the sensor forward along the x-axis just like
+  // in the LSM9DS0 sensor. This rotation can be modified to allow any convenient orientation convention.
+  // This is ok by aircraft orientation standards!  
+  // Pass gyro rate as rad/s
+   MadgwickQuaternionUpdate(ax, ay, az, gx*PI/180.0f, gy*PI/180.0f, gz*PI/180.0f,  my,  mx, mz, qt);
+    // MahonyQuaternionUpdate(ax, ay, az, gx*PI/180.0f, gy*PI/180.0f, gz*PI/180.0f, my, mx, mz);
+
+}
+
 
 /**
   * @brief main entry point.
@@ -504,7 +623,8 @@ int main(void)
          | DMP_FEATURE_SEND_RAW_ACCEL | DMP_FEATURE_SEND_CAL_GYRO |
         DMP_FEATURE_GYRO_CAL;
     dmp_enable_feature(hal.dmp_features);
-    dmp_set_fifo_rate(DEFAULT_MPU_HZ);
+    dmp_set_fifo_rate(50);
+    // dmp_set_fifo_rate(DEFAULT_MPU_HZ);
     mpu_set_dmp_state(1);
     hal.dmp_on = 1;
 
@@ -578,6 +698,12 @@ int main(void)
              * leftover packets in the FIFO.
              */
             dmp_read_fifo(gyro, accel_short, quat, &sensor_timestamp, &sensors, &more);
+
+            // 给其他算法添加值
+            gyroCount[0] = gyro[0];
+            gyroCount[1] = gyro[1];
+            gyroCount[2] = gyro[2];
+
             if (!more)
                 hal.new_gyro = 0;
             if (sensors & INV_XYZ_GYRO) {
@@ -595,6 +721,12 @@ int main(void)
                 accel[0] = (long)accel_short[0];
                 accel[1] = (long)accel_short[1];
                 accel[2] = (long)accel_short[2];
+
+                // 给其他算法添加值
+                accelCount[0] = accel_short[0];
+                accelCount[1] = accel_short[1];
+                accelCount[2] = accel_short[2];
+
                 inv_build_accel(accel, 0, sensor_timestamp);
                 new_data = 1;
             }
@@ -651,6 +783,10 @@ int main(void)
                 compass[0] = (long)compass_short[0];
                 compass[1] = (long)compass_short[1];
                 compass[2] = (long)compass_short[2];
+                // 给其他算法添加值
+                magCount[0] = compass_short[0];
+                magCount[1] = compass_short[1];
+                magCount[2] = compass_short[2];
                 /* NOTE: If using a third-party compass calibration library,
                  * pass in the compass data in uT * 2^16 and set the second
                  * parameter to INV_CALIBRATED | acc, where acc is the
@@ -668,6 +804,9 @@ int main(void)
              * in eMPL_outputs.c. This function only needs to be called at the
              * rate requested by the host.
              */
+            // 其他融合算法
+            other_fusion();
+
             read_from_mpl();
         }
     }

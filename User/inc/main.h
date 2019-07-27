@@ -35,6 +35,10 @@
 
 void gyro_data_ready_cb(void);
 
+
+
+
+
 #endif /* __MAIN_H */
 
 /******************* (C) COPYRIGHT 2010 STMicroelectronics *****END OF FILE****/

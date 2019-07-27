@@ -2797,11 +2797,17 @@
         <group>
             <name>inc</name>
             <file>
+                <name>$PROJ_DIR$\..\User\inc\fusion.h</name>
+            </file>
+            <file>
                 <name>$PROJ_DIR$\..\User\inc\main.h</name>
             </file>
         </group>
         <group>
             <name>src</name>
+            <file>
+                <name>$PROJ_DIR$\..\User\src\fusion.c</name>
+            </file>
             <file>
                 <name>$PROJ_DIR$\..\User\src\main.c</name>
             </file>
