@@ -44,12 +44,6 @@ typedef enum {
  */
 void eMPL_send_quat(long *quat);
 
-/**
- *  @brief      Send a data packet via UART
- *  @param[in]  type    Contents of packet (PACKET_DATA_ACCEL, etc).
- *  @param[in]  data    Data (length dependent on contents).
- */
-void eMPL_send_data(unsigned char type, long *data);
 
 #endif /* __PACKET_H__ */
 

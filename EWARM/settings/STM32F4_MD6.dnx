@@ -26,7 +26,7 @@
         <MultiCoreRunAll>1</MultiCoreRunAll>
     </Simulator>
     <DebugChecksum>
-        <Checksum>553824451</Checksum>
+        <Checksum>88083320</Checksum>
     </DebugChecksum>
     <Exceptions>
         <StopOnUncaught>_ 0</StopOnUncaught>
@@ -75,7 +75,7 @@
         <mode>0</mode>
     </Disassemble_mode>
     <StLinkDriver>
-        <stlinkserialNo>31421667</stlinkserialNo>
+        <stlinkserialNo>30303031</stlinkserialNo>
         <stlinkfoundProbes />
         <stlinkResetStyle>1</stlinkResetStyle>
         <stlinkResetStrategy>1</stlinkResetStrategy>
@@ -153,13 +153,14 @@
         <mode>0</mode>
     </DisassembleMode>
     <Breakpoints2>
-        <Bp0>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\User\src\main.c}.1021.13" 0 0 1 "" 0 "" 0</Bp0>
-        <Bp1>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\User\src\main.c}.144.11" 0 0 1 "" 0 "" 0</Bp1>
-        <Count>2</Count>
+        <Count>0</Count>
     </Breakpoints2>
     <Aliases>
-        <A0>_ "C:\STM32_EWARM\STM32L_MPLLIB\mpl\mag_disturb.c" ""</A0>
-        <Count>1</Count>
+        <A0>_ "C:\STM32_EWARM\STM32L_MPLLIB\mpl\accel_auto_cal.c" ""</A0>
+        <A1>_ "C:\STM32_EWARM\STM32L_MPLLIB\mpl\compass_vec_cal.c" ""</A1>
+        <A2>_ "C:\STM32_EWARM\STM32L_MPLLIB\mpl\fusion_9axis.c" ""</A2>
+        <A3>_ "C:\STM32_EWARM\STM32L_MPLLIB\mpl\mag_disturb.c" ""</A3>
+        <Count>4</Count>
         <SuppressDialog>0</SuppressDialog>
     </Aliases>
 </settings>

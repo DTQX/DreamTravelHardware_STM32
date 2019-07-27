@@ -106,100 +106,27 @@ int _MLPrintLog (int priority, const char* tag, const char* fmt, ...)
 
 void eMPL_send_quat(long *quat)
 {
-    char out[PACKET_LENGTH];
+    unsigned char out[12];
     int i;
     if (!quat)
         return;
-    memset(out, 0, PACKET_LENGTH);
+    memset(out, 0, 12);
     out[0] = 88;
     out[1] = 88;
     // out[0] = '$';
     // out[1] = PACKET_QUAT;
-    out[2] = (char)(quat[0] >> 24);
-    out[3] = (char)(quat[0] >> 16);
-    out[4] = (char)(quat[1] >> 24);
-    out[5] = (char)(quat[1] >> 16);
-    out[6] = (char)(quat[2] >> 24);
-    out[7] = (char)(quat[2] >> 16);
-    out[8] = (char)(quat[3] >> 24);
-    out[9] = (char)(quat[3] >> 16);
+    out[2] = (unsigned char)(quat[0] >> 24);
+    out[3] = (unsigned char)(quat[0] >> 16);
+    out[4] = (unsigned char)(quat[1] >> 24);
+    out[5] = (unsigned char)(quat[1] >> 16);
+    out[6] = (unsigned char)(quat[2] >> 24);
+    out[7] = (unsigned char)(quat[2] >> 16);
+    out[8] = (unsigned char)(quat[3] >> 24);
+    out[9] = (unsigned char)(quat[3] >> 16);
     out[10] = 44;
     out[11] = 44;
     
-    for (i=0; i<PACKET_LENGTH; i++) {
-      fputc(out[i]);
-    }
-}
-
-void eMPL_send_data(unsigned char type, long *data)
-{
-    char out[PACKET_LENGTH];
-    int i;
-    if (!data)
-        return;
-    memset(out, 0, PACKET_LENGTH);
-    out[0] = '$';
-    out[1] = PACKET_DATA;
-    out[2] = type;
-    out[21] = '\r';
-    out[22] = '\n';
-    switch (type) {
-    /* Two bytes per-element. */
-    case PACKET_DATA_ROT:
-        out[3] = (char)(data[0] >> 24);
-        out[4] = (char)(data[0] >> 16);
-        out[5] = (char)(data[1] >> 24);
-        out[6] = (char)(data[1] >> 16);
-        out[7] = (char)(data[2] >> 24);
-        out[8] = (char)(data[2] >> 16);
-        out[9] = (char)(data[3] >> 24);
-        out[10] = (char)(data[3] >> 16);
-        out[11] = (char)(data[4] >> 24);
-        out[12] = (char)(data[4] >> 16);
-        out[13] = (char)(data[5] >> 24);
-        out[14] = (char)(data[5] >> 16);
-        out[15] = (char)(data[6] >> 24);
-        out[16] = (char)(data[6] >> 16);
-        out[17] = (char)(data[7] >> 24);
-        out[18] = (char)(data[7] >> 16);
-        out[19] = (char)(data[8] >> 24);
-        out[20] = (char)(data[8] >> 16);
-        break;
-    /* Four bytes per-element. */
-    /* Four elements. */
-    case PACKET_DATA_QUAT:
-        out[15] = (char)(data[3] >> 24);
-        out[16] = (char)(data[3] >> 16);
-        out[17] = (char)(data[3] >> 8);
-        out[18] = (char)data[3];
-    /* Three elements. */
-    case PACKET_DATA_ACCEL:
-    case PACKET_DATA_GYRO:
-    case PACKET_DATA_COMPASS:
-    case PACKET_DATA_EULER:
-        out[3] = (char)(data[0] >> 24);
-        out[4] = (char)(data[0] >> 16);
-        out[5] = (char)(data[0] >> 8);
-        out[6] = (char)data[0];
-        out[7] = (char)(data[1] >> 24);
-        out[8] = (char)(data[1] >> 16);
-        out[9] = (char)(data[1] >> 8);
-        out[10] = (char)data[1];
-        out[11] = (char)(data[2] >> 24);
-        out[12] = (char)(data[2] >> 16);
-        out[13] = (char)(data[2] >> 8);
-        out[14] = (char)data[2];
-        break;
-    case PACKET_DATA_HEADING:
-        out[3] = (char)(data[0] >> 24);
-        out[4] = (char)(data[0] >> 16);
-        out[5] = (char)(data[0] >> 8);
-        out[6] = (char)data[0];
-        break;
-    default:
-        return;
-    }
-    for (i=0; i<PACKET_LENGTH; i++) {
+    for (i=0; i< 12; i++) {
       fputc(out[i]);
     }
 }
