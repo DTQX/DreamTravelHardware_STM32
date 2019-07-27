@@ -2,7 +2,7 @@
 .vscode
 
 # EWARM
-/EWARM
+/EWARM/Debug
 
 # Binary
 /Binary
