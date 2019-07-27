@@ -134,7 +134,6 @@ static inline int reg_int_cb(struct int_param_s *int_param)
  * #define MPU6500
  * #define AK8963_SECONDARY
  */
-#define MPU9250
 #if defined MPU9150
 #ifndef MPU6050
 #define MPU6050

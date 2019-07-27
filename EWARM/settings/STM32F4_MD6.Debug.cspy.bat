@@ -19,22 +19,6 @@
 @REM 
 
 
-@echo off 
+"C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.0_2\common\bin\cspybat" "C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.0_2\arm\bin\armproc.dll" "C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.0_2\arm\bin\armstlink.dll"  %1 --plugin "C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.0_2\arm\bin\armbat.dll" --device_macro "C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.0_2\arm\config\debugger\ST\STM32F4xx.dmac" --flash_loader "C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.0_2\arm\config\flashloader\ST\FlashSTM32F4xxx.board" --backend -B "--endian=little" "--cpu=Cortex-M4F" "--fpu=VFPv4" "-p" "C:\Program Files (x86)\IAR Systems\Embedded Workbench 7.0_2\arm\CONFIG\debugger\ST\STM32F407VG.ddf" "--drv_verify_download" "--semihosting" "--device=STM32F407VG" "--stlink_interface=SWD" "--stlink_reset_strategy=0,1" "--drv_swo_clock_setup=72000000,1,2000000" 
 
-if not "%~1" == "" goto debugFile 
 
-@echo on 
-
-"G:\Program Files (x86)\IAR Systems\Embedded Workbench 8.3\common\bin\cspybat" -f "F:\personal-workspace\UE4Projects\DreamTravelHardware_STM32\EWARM\settings\STM32F4_MD6.Debug.general.xcl" --backend -f "F:\personal-workspace\UE4Projects\DreamTravelHardware_STM32\EWARM\settings\STM32F4_MD6.Debug.driver.xcl" 
-
-@echo off 
-goto end 
-
-:debugFile 
-
-@echo on 
-
-"G:\Program Files (x86)\IAR Systems\Embedded Workbench 8.3\common\bin\cspybat" -f "F:\personal-workspace\UE4Projects\DreamTravelHardware_STM32\EWARM\settings\STM32F4_MD6.Debug.general.xcl" "--debug_file=%~1" --backend -f "F:\personal-workspace\UE4Projects\DreamTravelHardware_STM32\EWARM\settings\STM32F4_MD6.Debug.driver.xcl" 
-
-@echo off 
-:end
