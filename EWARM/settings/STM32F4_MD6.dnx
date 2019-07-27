@@ -26,7 +26,7 @@
         <MultiCoreRunAll>1</MultiCoreRunAll>
     </Simulator>
     <DebugChecksum>
-        <Checksum>3181212016</Checksum>
+        <Checksum>2524847056</Checksum>
     </DebugChecksum>
     <Exceptions>
         <StopOnUncaught>_ 0</StopOnUncaught>
@@ -75,13 +75,16 @@
         <mode>0</mode>
     </Disassemble_mode>
     <StLinkDriver>
-        <stlinkResetStyle>1</stlinkResetStyle>
-        <stlinkResetStrategy>1</stlinkResetStrategy>
-        <CStepIntDis>_ 0</CStepIntDis>
-        <LeaveTargetRunning>_ 0</LeaveTargetRunning>
         <stlinkserialNo>31421667</stlinkserialNo>
         <stlinkfoundProbes />
+        <CStepIntDis>_ 0</CStepIntDis>
+        <LeaveTargetRunning>_ 0</LeaveTargetRunning>
+        <stlinkResetStyle>1</stlinkResetStyle>
+        <stlinkResetStrategy>1</stlinkResetStrategy>
     </StLinkDriver>
+    <watch_formats>
+        <Fmt0>{W}1:tmp[0]	4	0</Fmt0>
+    </watch_formats>
     <Trace2>
         <Enabled>0</Enabled>
         <ShowSource>0</ShowSource>
@@ -127,11 +130,33 @@
         <ShowTimeSum>1</ShowTimeSum>
         <SumSortOrder>0</SumSortOrder>
     </EventLog>
+    <DisassembleMode>
+        <mode>0</mode>
+    </DisassembleMode>
+    <Breakpoints2>
+        <Bp0>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\User\src\main.c}.809.13" 0 0 1 "" 0 "" 0</Bp0>
+        <Bp1>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\User\src\fusion.c}.104.13" 0 0 1 "" 0 "" 0</Bp1>
+        <Bp2>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\User\src\fusion.c}.114.13" 0 0 1 "" 0 "" 0</Bp2>
+        <Bp3>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\User\src\main.c}.191.5" 0 0 1 "" 0 "" 0</Bp3>
+        <Count>4</Count>
+    </Breakpoints2>
+    <TermIOLog>
+        <LoggingEnabled>_ 0</LoggingEnabled>
+        <LogFile>_ ""</LogFile>
+    </TermIOLog>
     <LogFile>
         <LoggingEnabled>_ 0</LoggingEnabled>
         <LogFile>_ ""</LogFile>
         <Category>_ 0</Category>
     </LogFile>
+    <Aliases>
+        <A0>_ "C:\STM32_EWARM\STM32L_MPLLIB\mpl\accel_auto_cal.c" ""</A0>
+        <A1>_ "C:\STM32_EWARM\STM32L_MPLLIB\mpl\compass_vec_cal.c" ""</A1>
+        <A2>_ "C:\STM32_EWARM\STM32L_MPLLIB\mpl\fusion_9axis.c" ""</A2>
+        <A3>_ "C:\STM32_EWARM\STM32L_MPLLIB\mpl\mag_disturb.c" ""</A3>
+        <Count>4</Count>
+        <SuppressDialog>0</SuppressDialog>
+    </Aliases>
     <DriverProfiling>
         <Enabled>0</Enabled>
         <Mode>3</Mode>
@@ -145,22 +170,4 @@
     <CallStackStripe>
         <ShowTiming>1</ShowTiming>
     </CallStackStripe>
-    <DisassembleMode>
-        <mode>0</mode>
-    </DisassembleMode>
-    <Breakpoints2>
-        <Count>0</Count>
-    </Breakpoints2>
-    <Aliases>
-        <A0>_ "C:\STM32_EWARM\STM32L_MPLLIB\mpl\accel_auto_cal.c" ""</A0>
-        <A1>_ "C:\STM32_EWARM\STM32L_MPLLIB\mpl\compass_vec_cal.c" ""</A1>
-        <A2>_ "C:\STM32_EWARM\STM32L_MPLLIB\mpl\fusion_9axis.c" ""</A2>
-        <A3>_ "C:\STM32_EWARM\STM32L_MPLLIB\mpl\mag_disturb.c" ""</A3>
-        <Count>4</Count>
-        <SuppressDialog>0</SuppressDialog>
-    </Aliases>
-    <TermIOLog>
-        <LoggingEnabled>_ 0</LoggingEnabled>
-        <LogFile>_ ""</LogFile>
-    </TermIOLog>
 </settings>

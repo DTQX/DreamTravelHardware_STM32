@@ -168,11 +168,11 @@ void float_char(float f,unsigned char *s)
 }
 
 void my_send(long *quat){
-    unsigned char out[28];
+    unsigned char out[12];
     int i;
     if (!quat)
         return;
-    memset(out, 0, 28);
+    memset(out, 0, 12);
     out[0] = 88;
     out[1] = 88;
     // out[0] = '$';
@@ -185,35 +185,37 @@ void my_send(long *quat){
     out[7] = (unsigned char)(quat[2] >> 16);
     out[8] = (unsigned char)(quat[3] >> 24);
     out[9] = (unsigned char)(quat[3] >> 16);
+    out[10] = 44;
+    out[11] = 44;
+
+    // int tmp[4];
+    // tmp[0] = (int)(qt[0] * 100000000);
+    // tmp[1] = (int)(qt[1] * 100000000);
+    // tmp[2] = (int)(qt[2] * 100000000);
+    // tmp[3] = (int)(qt[3] * 100000000);
+
+    // out[10] = (uint8_t)(tmp[0] >> 24);
+    // out[11] = (uint8_t)(tmp[0] >> 16);
+    // out[12] = (uint8_t)(tmp[0] >> 8);
+    // out[13] = (uint8_t)tmp[0] ;
+    // out[14] = (uint8_t)(tmp[1] >> 24);
+    // out[15] = (uint8_t)(tmp[1] >> 16);
+    // out[16] = (uint8_t)(tmp[1] >> 8);
+    // out[17] = (uint8_t)tmp[1];
+    // out[18] = (uint8_t)(tmp[2] >> 24);
+    // out[19] = (uint8_t)(tmp[2] >> 16);
+    // out[20] = (uint8_t)(tmp[2] >> 8);
+    // out[21] = (uint8_t)tmp[2];
+    // out[22] = (uint8_t)(tmp[3] >> 24);
+    // out[23] = (uint8_t)(tmp[3] >> 16);
+    // out[24] = (uint8_t)(tmp[3] >> 8);
+    // out[25] = (uint8_t)tmp[3];
+
+
+    // out[26] = 44;
+    // out[27] = 44;
     
-
-    uint8_t tmp[4];
-    float_char(qt[0], tmp);
-    out[10] = tmp[0];
-    out[11] = tmp[1];
-    out[12] = tmp[2];
-    out[13] = tmp[3];
-    float_char(qt[1], tmp);
-    out[14] = tmp[0];
-    out[15] = tmp[1];
-    out[16] = tmp[2];
-    out[17] = tmp[3];
-    float_char(qt[2], tmp);
-    out[18] = tmp[0];
-    out[19] = tmp[1];
-    out[20] = tmp[2];
-    out[21] = tmp[3];
-    float_char(qt[3], tmp);
-    out[22] = tmp[0];
-    out[23] = tmp[1];
-    out[24] = tmp[2];
-    out[25] = tmp[3];
-
-
-    out[26] = 44;
-    out[27] = 44;
-    
-    for (i=0; i< 28; i++) {
+    for (i=0; i< 12; i++) {
       fputc(out[i]);
     }
 }
