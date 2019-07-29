@@ -67,7 +67,7 @@ float aRes = 2.0/32768.0, gRes = 2000.0/32768.0, mRes = 1.0/32768.0; // scale re
 int16_t accelCount[3];  // Stores the 16-bit signed accelerometer sensor output
 int16_t gyroCount[3];   // Stores the 16-bit signed gyro sensor output
 int16_t magCount[3];    // Stores the 16-bit signed magnetometer sensor output
-#define PI 3.1415
+#define PI 3.14159265358979323846f
 float qt[4];
 
 
