@@ -5,7 +5,7 @@ float q[4] = {1.0f, 0.0f, 0.0f, 0.0f};           // vector to hold quaternion
 float deltat = 1.0f/50.0f;                             // integration interval for both filter schemes
 float beta = 0.1f; // compute beta
 
-void MadgwickQuaternionUpdate(float ax, float ay, float az, float gx, float gy, float gz, float mx, float my, float mz, float *qt)
+void MadgwickQuaternionUpdate(float ax, float ay, float az, float gx, float gy, float gz, float mx, float my, float mz, float *qt, float deltat_time)
         {
             float q1 = q[0], q2 = q[1], q3 = q[2], q4 = q[3];   // short name local variable for readability
             float norm;

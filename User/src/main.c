@@ -63,7 +63,7 @@ volatile uint32_t hal_timestamp = 0;
 // other_fusion
 float ax, ay, az, gx, gy, gz, mx, my, mz; // variables to hold latest sensor data values 
 // float aRes = 2.0/32768.0, gRes = 2000.0/32768.0, mRes = 10. * 1229. / 4096.; // scale resolutions per LSB for the sensors
-float aRes = 2.0/32768.0, gRes = 2000.0/32768.0, mRes = 1.0/32768.0; // scale resolutions per LSB for the sensors
+float aRes = 2.0/16358.0, gRes = 2000.0/16358.0, mRes = 1.0/16358.0; // scale resolutions per LSB for the sensors
 int16_t accelCount[3];  // Stores the 16-bit signed accelerometer sensor output
 int16_t gyroCount[3];   // Stores the 16-bit signed gyro sensor output
 int16_t magCount[3];    // Stores the 16-bit signed magnetometer sensor output
@@ -381,7 +381,7 @@ void gyro_data_ready_cb(void)
 }
 /*******************************************************************************/
 
-void other_fusion(){
+void other_fusion(float deltat_time){
     // If intPin goes high or data ready status is TRUE, all data registers have new data
     
     // Now we'll calculate the accleration value into actual g's
@@ -411,7 +411,7 @@ void other_fusion(){
   // in the LSM9DS0 sensor. This rotation can be modified to allow any convenient orientation convention.
   // This is ok by aircraft orientation standards!  
   // Pass gyro rate as rad/s
-   MadgwickQuaternionUpdate(ax, ay, az, gx*PI/180.0f, gy*PI/180.0f, gz*PI/180.0f,  my,  mx, mz, qt);
+   MadgwickQuaternionUpdate(ax, ay, az, gx*PI/180.0f, gy*PI/180.0f, gz*PI/180.0f,  my,  mx, mz, qt, deltat_time);
     // MahonyQuaternionUpdate(ax, ay, az, gx*PI/180.0f, gy*PI/180.0f, gz*PI/180.0f, my, mx, mz);
 
 }
@@ -423,6 +423,7 @@ void other_fusion(){
   * @retval void None
   * @par Required preconditions: None
   */
+
                                   
 int main(void)
 { 
@@ -431,6 +432,7 @@ int main(void)
     unsigned char accel_fsr,  new_temp = 0;
     unsigned short gyro_rate, gyro_fsr;
     unsigned long timestamp;
+    unsigned long last_timestamp;
     struct int_param_s int_param;
 
 #ifdef COMPASS_ENABLED
@@ -465,7 +467,7 @@ int main(void)
      *
      * inv_9x_fusion_use_timestamps(1);
      */
-
+    inv_9x_fusion_use_timestamps(1);
     /* This function has been deprecated.
      * inv_enable_no_gyro_fusion();
      */
@@ -526,7 +528,7 @@ int main(void)
     /* The compass sampling rate can be less than the gyro/accel sampling rate.
      * Use this function for proper power management.
      */
-    mpu_set_compass_sample_rate(50);
+    mpu_set_compass_sample_rate(100);
     // mpu_set_compass_sample_rate(1000 / COMPASS_READ_MS);
 #endif
     /* Read back configuration in case it was set improperly. */
@@ -577,6 +579,7 @@ int main(void)
 
   /* Compass reads are handled by scheduler. */
   get_tick_count(&timestamp);
+  last_timestamp = timestamp;
 
     /* To initialize the DMP:
      * 1. Call dmp_load_motion_driver_firmware(). This pushes the DMP image in
@@ -630,12 +633,12 @@ int main(void)
          | DMP_FEATURE_SEND_RAW_ACCEL | DMP_FEATURE_SEND_CAL_GYRO |
         DMP_FEATURE_GYRO_CAL;
     dmp_enable_feature(hal.dmp_features);
-    dmp_set_fifo_rate(50);
-    dmp_set_fifo_rate(DEFAULT_MPU_HZ);
+    dmp_set_fifo_rate(100);
+    // dmp_set_fifo_rate(DEFAULT_MPU_HZ);
     mpu_set_dmp_state(1);
     hal.dmp_on = 1;
 
-    // mdelay(20);
+    mdelay(20);
 
     // // 关闭dmp
     // unsigned short dmp_rate;
@@ -854,7 +857,8 @@ int main(void)
              * rate requested by the host.
              */
             // 其他融合算法
-            other_fusion();
+            other_fusion((timestamp-last_timestamp)/1000.0f);
+            last_timestamp = timestamp;
 
             read_from_mpl();
         }
