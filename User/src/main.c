@@ -63,8 +63,8 @@ volatile uint32_t hal_timestamp = 0;
 
 // other_fusion
 float ax, ay, az, gx, gy, gz, mx, my, mz; // variables to hold latest sensor data values 
-float aRes = 2.0/32768.0, gRes = 2000.0/32768.0, mRes = 1.0/32768.0; // scale resolutions per LSB for the sensors
-// float aRes = 2.0/16358.0, gRes = 2000.0/16358.0, mRes = 1.0/16358.0; // scale resolutions per LSB for the sensors
+// float aRes = 2.0/32768.0, gRes = 2000.0/32768.0, mRes = 1.0/32768.0; // scale resolutions per LSB for the sensors
+float aRes = 2.0/16358.0, gRes = 2000.0/16358.0, mRes = 1.0/16358.0; // scale resolutions per LSB for the sensors
 long accelCount[3];  // Stores the 16-bit signed accelerometer sensor output
 long gyroCount[3];   // Stores the 16-bit signed gyro sensor output
 long magCount[3];    // Stores the 16-bit signed magnetometer sensor output
@@ -524,7 +524,7 @@ int main(void)
 #endif
     /* Push both gyro and accel data into the FIFO. */
     mpu_configure_fifo(INV_XYZ_GYRO | INV_XYZ_ACCEL);
-    mpu_set_sample_rate(100);
+    mpu_set_sample_rate(50);
     // mpu_set_sample_rate(DEFAULT_MPU_HZ);
 #ifdef COMPASS_ENABLED
     /* The compass sampling rate can be less than the gyro/accel sampling rate.
@@ -857,19 +857,9 @@ int main(void)
              * rate requested by the host.
              */
             // 其他融合算法
-            // 给其他算法添加值
-            int8_t accuracy;
-            unsigned long tmp_timestamp;
-
-            inv_get_sensor_type_accel(accelCount, &accuracy, (inv_time_t*)&tmp_timestamp);
-            inv_get_sensor_type_gyro(gyroCount, &accuracy, (inv_time_t*)&tmp_timestamp);
-            
-        #ifdef COMPASS_ENABLED
-            inv_get_sensor_type_compass(magCount, &accuracy,(inv_time_t*)&tmp_timestamp);
-        #endif
             float deltat_time= (timestamp-last_timestamp)/1000.0f;
             other_fusion(deltat_time);
-            MPL_LOGI("\ndeltat_time : %f\n",deltat_time);
+            // MPL_LOGI("\ndeltat_time : %f\n",deltat_time);
             last_timestamp = timestamp;
 
             read_from_mpl();
