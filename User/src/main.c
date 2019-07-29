@@ -63,8 +63,8 @@ volatile uint32_t hal_timestamp = 0;
 
 // other_fusion
 float ax, ay, az, gx, gy, gz, mx, my, mz; // variables to hold latest sensor data values 
-// float aRes = 2.0/32768.0, gRes = 2000.0/32768.0, mRes = 1.0/32768.0; // scale resolutions per LSB for the sensors
-float aRes = 2.0/16358.0, gRes = 2000.0/16358.0, mRes = 1.0/16358.0; // scale resolutions per LSB for the sensors
+float aRes = 1.0/32768.0, gRes = 1.0/32768.0, mRes = 1.0/32768.0; // scale resolutions per LSB for the sensors
+// float aRes = 2.0/16358.0, gRes = 2000.0/16358.0, mRes = 1.0/16358.0; // scale resolutions per LSB for the sensors
 long accelCount[3];  // Stores the 16-bit signed accelerometer sensor output
 long gyroCount[3];   // Stores the 16-bit signed gyro sensor output
 long magCount[3];    // Stores the 16-bit signed magnetometer sensor output
@@ -412,8 +412,9 @@ void other_fusion(float deltat_time){
   // in the LSM9DS0 sensor. This rotation can be modified to allow any convenient orientation convention.
   // This is ok by aircraft orientation standards!  
   // Pass gyro rate as rad/s
-   MadgwickQuaternionUpdate(ax, ay, az, gx*PI/180.0f, gy*PI/180.0f, gz*PI/180.0f,  mx,  my, mz, qt, deltat_time);
-    // MahonyQuaternionUpdate(ax, ay, az, gx*PI/180.0f, gy*PI/180.0f, gz*PI/180.0f, my, mx, mz);
+//    MadgwickQuaternionUpdate(-ax, ay, az, gx*PI/180.0f, -gy*PI/180.0f,- gz*PI/180.0f, my, -mx, mz,qt, deltat_time);
+   MadgwickQuaternionUpdate(ax, ay, az, gx*PI/180.0f, gy*PI/180.0f, gz*PI/180.0f,  my,  mx, mz, qt, deltat_time);
+    // MahonyQuaternionUpdate(ax, ay, az, gx*PI/180.0f, gy*PI/180.0f, gz*PI/180.0f, my, mx, mz,qt, deltat_time);
 
 }
 
@@ -858,30 +859,37 @@ int main(void)
              * in eMPL_outputs.c. This function only needs to be called at the
              * rate requested by the host.
              */
-            // 其他融合算法
-            // 给其他算法添加值
-        //     int8_t accuracy;
-        //     unsigned long tmp_timestamp;
-
-        //     inv_get_sensor_type_accel(accelCount, &accuracy, (inv_time_t*)&tmp_timestamp);
-        //     inv_get_sensor_type_gyro(gyroCount, &accuracy, (inv_time_t*)&tmp_timestamp);
             
-        // #ifdef COMPASS_ENABLED
-        //     inv_get_sensor_type_compass(magCount, &accuracy,(inv_time_t*)&tmp_timestamp);
-        // #endif
-        //     accelCount[0] = accelCount[0] >> 15;
-        //     accelCount[1] = accelCount[1] >> 15;
-        //     accelCount[2] = accelCount[2] >> 15;
-        //     accelCount[0] = accelCount[0] >> 15;
-        //     accelCount[1] = accelCount[1] >> 15;
-        //     accelCount[2] = accelCount[2] >> 15;
+        }
 
+        // 其他融合算法
+            // 给其他算法添加值
+            int8_t accuracy;
+            unsigned long tmp_timestamp;
+
+            inv_get_sensor_type_accel(accelCount, &accuracy, (inv_time_t*)&tmp_timestamp);
+            inv_get_sensor_type_gyro(gyroCount, &accuracy, (inv_time_t*)&tmp_timestamp);
+            
+        #ifdef COMPASS_ENABLED
+            inv_get_sensor_type_compass(magCount, &accuracy,(inv_time_t*)&tmp_timestamp);
+        #endif
+            // accelCount[0] = accelCount[0] >> 15;
+            // accelCount[1] = accelCount[1] >> 15;
+            // accelCount[2] = accelCount[2] >> 15;
+            // accelCount[0] = accelCount[0] >> 15;
+            // accelCount[1] = accelCount[1] >> 15;
+            // accelCount[2] = accelCount[2] >> 15;
+
+        // if(timestamp-last_timestamp>0){
             float deltat_time= (timestamp-last_timestamp)/1000.0f;
             other_fusion(deltat_time);
-            // MPL_LOGI("\ndeltat_time : %f\n",deltat_time);
+            // MPL_LOGI("\ndeltat_time : %d\n",timestamp);
             last_timestamp = timestamp;
 
             read_from_mpl();
-        }
+        // }
+
+
+            
     }
 }

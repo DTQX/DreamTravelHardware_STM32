@@ -11,6 +11,21 @@
         5.gyro scale 暂无法测，预测通过减小scale，可以降低敏感度，从而减小误差
         6.取样率为100及以上时，效果并没有明显提升，且容易卡死
         结论：自带的测试绕Z的误差还是比较大，看看有没有其他替代算法
+    3.官方算法，
+        1.mpu不动，复位测试
+         PlayerBonePoses: X=9.708 Y=-2.591 Z=100.639,
+ ,       PlayerBonePoses: X=12.565 Y=-2.380 Z=6.569, 
+  ,PlayerBonePoses: X=12.654 Y=-2.327 Z=5.480,inv-multi:X=12.264 Y=-3.040 Z=1
+   ,PlayerBonePoses: X=10.791 Y=-2.593 Z=8.343, MPUOffsetPose: X=-0.319 Y=-0.747 Z=12.138, mul
+   0 ,PlayerBonePoses: X=12.193 Y=-2.454 Z=5.756, MPUOffsetPose: X=-0.319 Y=-0.747 Z=12.138, multi: X=
+    0 ,PlayerBonePoses: X=11.508 Y=-2.378 Z=5.232, MPUOffs
+        结论：有几度的偏差
+        2.mpu运动，复位
+        PlayerBonePoses: X=0.094 Y=0.954 Z=16.275
+        PlayerBonePoses: X=0.041 Y=0.961 Z=21.608
+        PlayerBonePoses: X=0.025 Y=0.852 Z=16.514
+        结论：有几度的偏差，整体效果不错
+
 
     3.新方向：
         1.测试kalman滤波
