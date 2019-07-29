@@ -766,7 +766,7 @@ int mpu_init(struct int_param_s *int_param)
         return -1;
     if (mpu_set_lpf(42))
         return -1;
-    if (mpu_set_sample_rate(50))
+    if (mpu_set_sample_rate(100))
         return -1;
     if (mpu_configure_fifo(0))
         return -1;
@@ -778,7 +778,7 @@ int mpu_init(struct int_param_s *int_param)
 
 #ifdef AK89xx_SECONDARY
     setup_compass();
-    if (mpu_set_compass_sample_rate(10))
+    if (mpu_set_compass_sample_rate(100))
         return -1;
 #else
     /* Already disabled by setup_compass. */

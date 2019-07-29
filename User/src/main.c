@@ -59,7 +59,7 @@ volatile uint32_t hal_timestamp = 0;
 #define PEDO_READ_MS    (1000)
 #define TEMP_READ_MS    (500)
 // #define COMPASS_READ_MS (100)
-#define COMPASS_READ_MS (100)
+#define COMPASS_READ_MS (10)
 
 // other_fusion
 float ax, ay, az, gx, gy, gz, mx, my, mz; // variables to hold latest sensor data values 
@@ -412,7 +412,7 @@ void other_fusion(float deltat_time){
   // in the LSM9DS0 sensor. This rotation can be modified to allow any convenient orientation convention.
   // This is ok by aircraft orientation standards!  
   // Pass gyro rate as rad/s
-   MadgwickQuaternionUpdate(ax, ay, az, gx*PI/180.0f, gy*PI/180.0f, gz*PI/180.0f,  my,  mx, mz, qt, deltat_time);
+   MadgwickQuaternionUpdate(ax, ay, az, gx*PI/180.0f, gy*PI/180.0f, gz*PI/180.0f,  mx,  my, mz, qt, deltat_time);
     // MahonyQuaternionUpdate(ax, ay, az, gx*PI/180.0f, gy*PI/180.0f, gz*PI/180.0f, my, mx, mz);
 
 }
@@ -524,7 +524,7 @@ int main(void)
 #endif
     /* Push both gyro and accel data into the FIFO. */
     mpu_configure_fifo(INV_XYZ_GYRO | INV_XYZ_ACCEL);
-    mpu_set_sample_rate(50);
+    mpu_set_sample_rate(100);
     // mpu_set_sample_rate(DEFAULT_MPU_HZ);
 #ifdef COMPASS_ENABLED
     /* The compass sampling rate can be less than the gyro/accel sampling rate.
@@ -634,7 +634,7 @@ int main(void)
          | DMP_FEATURE_SEND_RAW_ACCEL | DMP_FEATURE_SEND_CAL_GYRO |
         DMP_FEATURE_GYRO_CAL;
     dmp_enable_feature(hal.dmp_features);
-    dmp_set_fifo_rate(50);
+    dmp_set_fifo_rate(100);
     // dmp_set_fifo_rate(DEFAULT_MPU_HZ);
     mpu_set_dmp_state(1);
     hal.dmp_on = 1;
@@ -740,6 +740,8 @@ int main(void)
             gyroCount[0] = gyro[0];
             gyroCount[1] = gyro[1];
             gyroCount[2] = gyro[2];
+
+
 
             if (!more)
                 hal.new_gyro = 0;
@@ -857,6 +859,23 @@ int main(void)
              * rate requested by the host.
              */
             // 其他融合算法
+            // 给其他算法添加值
+        //     int8_t accuracy;
+        //     unsigned long tmp_timestamp;
+
+        //     inv_get_sensor_type_accel(accelCount, &accuracy, (inv_time_t*)&tmp_timestamp);
+        //     inv_get_sensor_type_gyro(gyroCount, &accuracy, (inv_time_t*)&tmp_timestamp);
+            
+        // #ifdef COMPASS_ENABLED
+        //     inv_get_sensor_type_compass(magCount, &accuracy,(inv_time_t*)&tmp_timestamp);
+        // #endif
+        //     accelCount[0] = accelCount[0] >> 15;
+        //     accelCount[1] = accelCount[1] >> 15;
+        //     accelCount[2] = accelCount[2] >> 15;
+        //     accelCount[0] = accelCount[0] >> 15;
+        //     accelCount[1] = accelCount[1] >> 15;
+        //     accelCount[2] = accelCount[2] >> 15;
+
             float deltat_time= (timestamp-last_timestamp)/1000.0f;
             other_fusion(deltat_time);
             // MPL_LOGI("\ndeltat_time : %f\n",deltat_time);

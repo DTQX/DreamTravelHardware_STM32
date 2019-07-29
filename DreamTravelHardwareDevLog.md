@@ -1,14 +1,20 @@
 ##2019.7.29
     1.测试
         1.晃动测试，自带算法很快稳定，Madgwick稳定的慢（考虑是不是delta设置有问题）
-        2.
+        2.Madgwick绕Z轴有问题，mpu转90度，Madgwick得到的只有20度左右
+        3.将自带算法得到的数据给Madgwick，效果依然不好
     2.官方自带测试（默认条件，使用dmp ， 不使用timestamp， accelerate 2g， gyro 2000 dps， 使用compass）
         1.compass accuracy = 3 ，晃动测试，绕Z偏移10度左右； accuracy = 0 ，晃动测试，绕Z偏移10度左右。结论：accuracy作用不大
         2.use timestamp 晃动测试，绕Z偏移10度左右; not use 绕Z偏移15度左右。 结论：最好使用timestamp
         3.不使用dmp 晃动测试，绕Z偏移40度以上，且恢复需要一定时间。结论：要使用dmp
         4.accelerate 4g， 绕x，绕y变得不稳定些，绕z和之前一样
-        5.gyro scale 暂无法测
+        5.gyro scale 暂无法测，预测通过减小scale，可以降低敏感度，从而减小误差
+        6.取样率为100及以上时，效果并没有明显提升，且容易卡死
         结论：自带的测试绕Z的误差还是比较大，看看有没有其他替代算法
+
+    3.新方向：
+        1.测试kalman滤波
+        2.将gyro scale降低为500，看看能不能减小误差
 
 
 
