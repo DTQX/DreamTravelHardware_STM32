@@ -760,7 +760,7 @@ int mpu_init(struct int_param_s *int_param)
     st.chip_cfg.dmp_loaded = 0;
     st.chip_cfg.dmp_sample_rate = 0;
 
-    if (mpu_set_gyro_fsr(1000))
+    if (mpu_set_gyro_fsr(2000))
         return -1;
     if (mpu_set_accel_fsr(2))
         return -1;

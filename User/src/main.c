@@ -58,15 +58,16 @@ volatile uint32_t hal_timestamp = 0;
 
 #define PEDO_READ_MS    (1000)
 #define TEMP_READ_MS    (500)
+// #define COMPASS_READ_MS (100)
 #define COMPASS_READ_MS (100)
 
 // other_fusion
 float ax, ay, az, gx, gy, gz, mx, my, mz; // variables to hold latest sensor data values 
-// float aRes = 2.0/32768.0, gRes = 2000.0/32768.0, mRes = 10. * 1229. / 4096.; // scale resolutions per LSB for the sensors
-float aRes = 2.0/16358.0, gRes = 2000.0/16358.0, mRes = 1.0/16358.0; // scale resolutions per LSB for the sensors
-int16_t accelCount[3];  // Stores the 16-bit signed accelerometer sensor output
-int16_t gyroCount[3];   // Stores the 16-bit signed gyro sensor output
-int16_t magCount[3];    // Stores the 16-bit signed magnetometer sensor output
+float aRes = 2.0/32768.0, gRes = 2000.0/32768.0, mRes = 1.0/32768.0; // scale resolutions per LSB for the sensors
+// float aRes = 2.0/16358.0, gRes = 2000.0/16358.0, mRes = 1.0/16358.0; // scale resolutions per LSB for the sensors
+long accelCount[3];  // Stores the 16-bit signed accelerometer sensor output
+long gyroCount[3];   // Stores the 16-bit signed gyro sensor output
+long magCount[3];    // Stores the 16-bit signed magnetometer sensor output
 #define PI 3.14159265358979323846f
 float qt[4];
 
@@ -385,22 +386,22 @@ void other_fusion(float deltat_time){
     // If intPin goes high or data ready status is TRUE, all data registers have new data
     
     // Now we'll calculate the accleration value into actual g's
-    ax = (float)accelCount[0]*aRes;  // get actual g value, this depends on scale being set
-    ay = (float)accelCount[1]*aRes;   
-    az = (float)accelCount[2]*aRes;    
+    ax = (float)(accelCount[0]*aRes);  // get actual g value, this depends on scale being set
+    ay = (float)(accelCount[1]*aRes);   
+    az = (float)(accelCount[2]*aRes);    
    
  
     // Calculate the gyro value into actual degrees per second
-    gx = (float)gyroCount[0]*gRes;  // get actual gyro value, this depends on scale being set
-    gy = (float)gyroCount[1]*gRes;  
-    gz = (float)gyroCount[2]*gRes;   
+    gx = (float)(gyroCount[0]*gRes);  // get actual gyro value, this depends on scale being set
+    gy = (float)(gyroCount[1]*gRes);  
+    gz = (float)(gyroCount[2]*gRes);   
  
   
     // Calculate the magnetometer values in milliGauss
     // Include factory calibration per data sheet and user environmental corrections
-    mx = (float)magCount[0]*mRes;  // get actual magnetometer value, this depends on scale being set
-    my = (float)magCount[1]*mRes;  
-    mz = (float)magCount[2]*mRes;   
+    mx = (float)(magCount[0]*mRes);  // get actual magnetometer value, this depends on scale being set
+    my = (float)(magCount[1]*mRes);  
+    mz = (float)(magCount[2]*mRes);   
     
     //   deltat = 1.0/50.0; // set integration time by time elapsed since last filter update
 
@@ -446,6 +447,7 @@ int main(void)
       MPL_LOGE("Could not initialize gyro.\n");
   }
   
+    
 
     /* If you're not using an MPU9150 AND you're not using DMP features, this
      * function will place all slaves on the primary bus.
@@ -467,7 +469,7 @@ int main(void)
      *
      * inv_9x_fusion_use_timestamps(1);
      */
-    inv_9x_fusion_use_timestamps(1);
+    // inv_9x_fusion_use_timestamps(1);
     /* This function has been deprecated.
      * inv_enable_no_gyro_fusion();
      */
@@ -522,14 +524,13 @@ int main(void)
 #endif
     /* Push both gyro and accel data into the FIFO. */
     mpu_configure_fifo(INV_XYZ_GYRO | INV_XYZ_ACCEL);
-    mpu_set_sample_rate(50);
+    mpu_set_sample_rate(100);
     // mpu_set_sample_rate(DEFAULT_MPU_HZ);
 #ifdef COMPASS_ENABLED
     /* The compass sampling rate can be less than the gyro/accel sampling rate.
      * Use this function for proper power management.
      */
-    mpu_set_compass_sample_rate(100);
-    // mpu_set_compass_sample_rate(1000 / COMPASS_READ_MS);
+    mpu_set_compass_sample_rate(1000 / COMPASS_READ_MS);
 #endif
     /* Read back configuration in case it was set improperly. */
     mpu_get_sample_rate(&gyro_rate);
@@ -547,8 +548,8 @@ int main(void)
      * inv_set_compass_sample_rate is called with the correct value, the 9-axis
      * fusion algorithm's compass correction gain will work properly.
      */
-    // inv_set_compass_sample_rate(COMPASS_READ_MS * 1000L);
-    inv_set_compass_sample_rate(1000000L / gyro_rate);
+    inv_set_compass_sample_rate(COMPASS_READ_MS * 1000L);
+    // inv_set_compass_sample_rate(1000000L / gyro_rate);
 #endif
     /* Set chip-to-body orientation matrix.
      * Set hardware units to dps/g's/degrees scaling factor.
@@ -633,13 +634,12 @@ int main(void)
          | DMP_FEATURE_SEND_RAW_ACCEL | DMP_FEATURE_SEND_CAL_GYRO |
         DMP_FEATURE_GYRO_CAL;
     dmp_enable_feature(hal.dmp_features);
-    dmp_set_fifo_rate(100);
+    dmp_set_fifo_rate(50);
     // dmp_set_fifo_rate(DEFAULT_MPU_HZ);
     mpu_set_dmp_state(1);
     hal.dmp_on = 1;
 
-    mdelay(20);
-
+    // mdelay(20);
     // // 关闭dmp
     // unsigned short dmp_rate;
     // unsigned char mask = 0;
@@ -857,7 +857,19 @@ int main(void)
              * rate requested by the host.
              */
             // 其他融合算法
-            other_fusion((timestamp-last_timestamp)/1000.0f);
+            // 给其他算法添加值
+            int8_t accuracy;
+            unsigned long tmp_timestamp;
+
+            inv_get_sensor_type_accel(accelCount, &accuracy, (inv_time_t*)&tmp_timestamp);
+            inv_get_sensor_type_gyro(gyroCount, &accuracy, (inv_time_t*)&tmp_timestamp);
+            
+        #ifdef COMPASS_ENABLED
+            inv_get_sensor_type_compass(magCount, &accuracy,(inv_time_t*)&tmp_timestamp);
+        #endif
+            float deltat_time= (timestamp-last_timestamp)/1000.0f;
+            other_fusion(deltat_time);
+            MPL_LOGI("\ndeltat_time : %f\n",deltat_time);
             last_timestamp = timestamp;
 
             read_from_mpl();

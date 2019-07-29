@@ -65,6 +65,18 @@ void GPIO_Config(void)
   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x00;
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
   NVIC_Init(&NVIC_InitStructure);
+
+
+  // //   重置mpu
+  // GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12;
+  // GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
+  // GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;
+  // GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+  // GPIO_Init(GPIOC, &GPIO_InitStructure);
+  // GPIO_ResetBits(GPIOC,GPIO_Pin_12);
+  // long i = 100000;
+	// while(i--); 		   
+	// GPIO_SetBits(GPIOC,GPIO_Pin_12);
 }
 
 void EnableInvInterrupt(void)
