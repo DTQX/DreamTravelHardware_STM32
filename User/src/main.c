@@ -62,7 +62,8 @@ volatile uint32_t hal_timestamp = 0;
 
 // other_fusion
 float ax, ay, az, gx, gy, gz, mx, my, mz; // variables to hold latest sensor data values 
-float aRes = 1.0/32768.0, gRes = 1.0/32768.0, mRes = 1.0/32768.0; // scale resolutions per LSB for the sensors
+// float aRes = 2.0/32768.0, gRes = 2000.0/32768.0, mRes = 10. * 1229. / 4096.; // scale resolutions per LSB for the sensors
+float aRes = 2.0/32768.0, gRes = 2000.0/32768.0, mRes = 1.0/32768.0; // scale resolutions per LSB for the sensors
 int16_t accelCount[3];  // Stores the 16-bit signed accelerometer sensor output
 int16_t gyroCount[3];   // Stores the 16-bit signed gyro sensor output
 int16_t magCount[3];    // Stores the 16-bit signed magnetometer sensor output
@@ -167,12 +168,13 @@ void float_char(float f,unsigned char *s)
     *(s+3) = rs.dat[3];
 }
 
+
 void my_send(long *quat){
-    unsigned char out[12];
+    unsigned char out[28];
     int i;
     if (!quat)
         return;
-    memset(out, 0, 12);
+    memset(out, 0, 28);
     out[0] = 88;
     out[1] = 88;
     // out[0] = '$';
@@ -185,37 +187,37 @@ void my_send(long *quat){
     out[7] = (unsigned char)(quat[2] >> 16);
     out[8] = (unsigned char)(quat[3] >> 24);
     out[9] = (unsigned char)(quat[3] >> 16);
-    out[10] = 44;
-    out[11] = 44;
+    // out[10] = 44;
+    // out[11] = 44;
 
-    // int tmp[4];
-    // tmp[0] = (int)(qt[0] * 100000000);
-    // tmp[1] = (int)(qt[1] * 100000000);
-    // tmp[2] = (int)(qt[2] * 100000000);
-    // tmp[3] = (int)(qt[3] * 100000000);
+    int tmp[4];
+    tmp[0] = (int)(qt[0] * 100000000);
+    tmp[1] = (int)(qt[1] * 100000000);
+    tmp[2] = (int)(qt[2] * 100000000);
+    tmp[3] = (int)(qt[3] * 100000000);
 
-    // out[10] = (uint8_t)(tmp[0] >> 24);
-    // out[11] = (uint8_t)(tmp[0] >> 16);
-    // out[12] = (uint8_t)(tmp[0] >> 8);
-    // out[13] = (uint8_t)tmp[0] ;
-    // out[14] = (uint8_t)(tmp[1] >> 24);
-    // out[15] = (uint8_t)(tmp[1] >> 16);
-    // out[16] = (uint8_t)(tmp[1] >> 8);
-    // out[17] = (uint8_t)tmp[1];
-    // out[18] = (uint8_t)(tmp[2] >> 24);
-    // out[19] = (uint8_t)(tmp[2] >> 16);
-    // out[20] = (uint8_t)(tmp[2] >> 8);
-    // out[21] = (uint8_t)tmp[2];
-    // out[22] = (uint8_t)(tmp[3] >> 24);
-    // out[23] = (uint8_t)(tmp[3] >> 16);
-    // out[24] = (uint8_t)(tmp[3] >> 8);
-    // out[25] = (uint8_t)tmp[3];
+    out[10] = (uint8_t)(tmp[0] >> 24);
+    out[11] = (uint8_t)(tmp[0] >> 16);
+    out[12] = (uint8_t)(tmp[0] >> 8);
+    out[13] = (uint8_t)tmp[0] ;
+    out[14] = (uint8_t)(tmp[1] >> 24);
+    out[15] = (uint8_t)(tmp[1] >> 16);
+    out[16] = (uint8_t)(tmp[1] >> 8);
+    out[17] = (uint8_t)tmp[1];
+    out[18] = (uint8_t)(tmp[2] >> 24);
+    out[19] = (uint8_t)(tmp[2] >> 16);
+    out[20] = (uint8_t)(tmp[2] >> 8);
+    out[21] = (uint8_t)tmp[2];
+    out[22] = (uint8_t)(tmp[3] >> 24);
+    out[23] = (uint8_t)(tmp[3] >> 16);
+    out[24] = (uint8_t)(tmp[3] >> 8);
+    out[25] = (uint8_t)tmp[3];
 
 
-    // out[26] = 44;
-    // out[27] = 44;
+    out[26] = 44;
+    out[27] = 44;
     
-    for (i=0; i< 12; i++) {
+    for (i=0; i< 28; i++) {
       fputc(out[i]);
     }
 }
@@ -518,12 +520,14 @@ int main(void)
 #endif
     /* Push both gyro and accel data into the FIFO. */
     mpu_configure_fifo(INV_XYZ_GYRO | INV_XYZ_ACCEL);
-    mpu_set_sample_rate(DEFAULT_MPU_HZ);
+    mpu_set_sample_rate(50);
+    // mpu_set_sample_rate(DEFAULT_MPU_HZ);
 #ifdef COMPASS_ENABLED
     /* The compass sampling rate can be less than the gyro/accel sampling rate.
      * Use this function for proper power management.
      */
-    mpu_set_compass_sample_rate(1000 / COMPASS_READ_MS);
+    mpu_set_compass_sample_rate(50);
+    // mpu_set_compass_sample_rate(1000 / COMPASS_READ_MS);
 #endif
     /* Read back configuration in case it was set improperly. */
     mpu_get_sample_rate(&gyro_rate);
@@ -541,7 +545,8 @@ int main(void)
      * inv_set_compass_sample_rate is called with the correct value, the 9-axis
      * fusion algorithm's compass correction gain will work properly.
      */
-    inv_set_compass_sample_rate(COMPASS_READ_MS * 1000L);
+    // inv_set_compass_sample_rate(COMPASS_READ_MS * 1000L);
+    inv_set_compass_sample_rate(1000000L / gyro_rate);
 #endif
     /* Set chip-to-body orientation matrix.
      * Set hardware units to dps/g's/degrees scaling factor.
@@ -626,9 +631,36 @@ int main(void)
         DMP_FEATURE_GYRO_CAL;
     dmp_enable_feature(hal.dmp_features);
     dmp_set_fifo_rate(50);
-    // dmp_set_fifo_rate(DEFAULT_MPU_HZ);
+    dmp_set_fifo_rate(DEFAULT_MPU_HZ);
     mpu_set_dmp_state(1);
     hal.dmp_on = 1;
+
+    // mdelay(20);
+
+    // // 关闭dmp
+    // unsigned short dmp_rate;
+    // unsigned char mask = 0;
+    // hal.dmp_on = 0;
+    // mpu_set_dmp_state(0);
+    // /* Restore FIFO settings. */
+    // if (hal.sensors & ACCEL_ON)
+    //     mask |= INV_XYZ_ACCEL;
+    // if (hal.sensors & GYRO_ON)
+    //     mask |= INV_XYZ_GYRO;
+    // if (hal.sensors & COMPASS_ON)
+    //     mask |= INV_XYZ_COMPASS;
+    // mpu_configure_fifo(mask);
+    // /* When the DMP is used, the hardware sampling rate is fixed at
+    //     * 200Hz, and the DMP is configured to downsample the FIFO output
+    //     * using the function dmp_set_fifo_rate. However, when the DMP is
+    //     * turned off, the sampling rate remains at 200Hz. This could be
+    //     * handled in inv_mpu.c, but it would need to know that
+    //     * inv_mpu_dmp_motion_driver.c exists. To avoid this, we'll just
+    //     * put the extra logic in the application layer.
+    //     */
+    // dmp_get_fifo_rate(&dmp_rate);
+    // mpu_set_sample_rate(dmp_rate);
+    // inv_quaternion_sensor_was_turned_off();
 
   while(1){
     
@@ -752,9 +784,21 @@ int main(void)
             hal.new_gyro = 0;
             mpu_read_fifo(gyro, accel_short, &sensor_timestamp,
                 &sensors, &more);
+
+            // 给其他算法添加值
+            gyroCount[0] = gyro[0];
+            gyroCount[1] = gyro[1];
+            gyroCount[2] = gyro[2];
+            // 给其他算法添加值
+            accelCount[0] = accel_short[0];
+            accelCount[1] = accel_short[1];
+            accelCount[2] = accel_short[2];
+
             if (more)
                 hal.new_gyro = 1;
             if (sensors & INV_XYZ_GYRO) {
+                
+
                 /* Push the new data to the MPL. */
                 inv_build_gyro(gyro, sensor_timestamp);
                 new_data = 1;
@@ -769,6 +813,9 @@ int main(void)
                 accel[0] = (long)accel_short[0];
                 accel[1] = (long)accel_short[1];
                 accel[2] = (long)accel_short[2];
+
+                
+
                 inv_build_accel(accel, 0, sensor_timestamp);
                 new_data = 1;
             }
