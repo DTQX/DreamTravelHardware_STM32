@@ -64,6 +64,7 @@ volatile uint32_t hal_timestamp = 0;
 // other_fusion
 float ax, ay, az, gx, gy, gz, mx, my, mz; // variables to hold latest sensor data values 
 float aRes = 1.0/32768.0, gRes = 1.0/32768.0, mRes = 1.0/32768.0; // scale resolutions per LSB for the sensors
+// float aRes = 2.0/32768.0, gRes = 2000.0/32768.0, mRes = 1.0/32768.0; // scale resolutions per LSB for the sensors
 // float aRes = 2.0/16358.0, gRes = 2000.0/16358.0, mRes = 1.0/16358.0; // scale resolutions per LSB for the sensors
 long accelCount[3];  // Stores the 16-bit signed accelerometer sensor output
 long gyroCount[3];   // Stores the 16-bit signed gyro sensor output
@@ -880,14 +881,14 @@ int main(void)
             // accelCount[1] = accelCount[1] >> 15;
             // accelCount[2] = accelCount[2] >> 15;
 
-        // if(timestamp-last_timestamp>0){
+        if(timestamp-last_timestamp>1){
             float deltat_time= (timestamp-last_timestamp)/1000.0f;
             other_fusion(deltat_time);
             // MPL_LOGI("\ndeltat_time : %d\n",timestamp);
             last_timestamp = timestamp;
 
             read_from_mpl();
-        // }
+        }
 
 
             
