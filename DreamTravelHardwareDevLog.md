@@ -1,4 +1,17 @@
 
+##2019.7.31
+    1.以后可以用一个圆圈来制作稳定强磁场，避免罗盘受其他磁场的影响
+
+    2.代办：
+        1.移植Risk的mpu9250AHRS代码，然后测试精准度
+        2.移植Madgwick算法到MPU6050+HMC5883l上，测试精准度（使用dmp的数据、不使用dmp）
+        3.测试ICM-20948传感器（使用自带的算法）
+        4.从MPU9250+自带算法，MPU9250+Madgwick算法，MPU6050+HMC5883l+Madgwick算法，ICM-20948+自带算法，选出一个解决方案（如果没有合适的，再试试MPU6050+HMC5883l+kalman算法）
+
+    3.标准：
+    TODO
+      身长2m，圆周长12.5m，允许整体最大偏移10cm，精度0.1/12 = 0.008，角度 0.008*360 = 3度
+
 ##2019.7.30
     1.一个发现，今早在跑官方代码看罗盘数据时，发现，绕Z旋转一圈的罗盘数据：0~50。这解释了使用madgwick时，绕z旋转90度，实际只偏移了20度。（50/360约等于20/90）
 
@@ -6,8 +19,6 @@
     2.代办：
         1.自带算法是否满足精度需求？抖动绕z误差15度，复位绕z误差5度。
         2.尝试使用3方罗盘，比较ak89xx、L883（While trying the sensors as a compass, we realised that the 9150 was very noisy and varied between -2 and 2 degrees about a mean value while the hmc was more stable and varied between -0.5 to 0.5 from its mean value. ）
-
-
 
     mpu选择
         1.
@@ -48,25 +59,22 @@
         结论：自带的测试绕Z的误差还是比较大，看看有没有其他替代算法
     3.官方算法，
         1.mpu不动，复位测试
-         PlayerBonePoses: X=9.708 Y=-2.591 Z=100.639,
- ,       PlayerBonePoses: X=12.565 Y=-2.380 Z=6.569, 
-  ,PlayerBonePoses: X=12.654 Y=-2.327 Z=5.480,inv-multi:X=12.264 Y=-3.040 Z=1
-   ,PlayerBonePoses: X=10.791 Y=-2.593 Z=8.343, MPUOffsetPose: X=-0.319 Y=-0.747 Z=12.138, mul
-   0 ,PlayerBonePoses: X=12.193 Y=-2.454 Z=5.756, MPUOffsetPose: X=-0.319 Y=-0.747 Z=12.138, multi: X=
-    0 ,PlayerBonePoses: X=11.508 Y=-2.378 Z=5.232, MPUOffs
-        结论：有几度的偏差
+          PlayerBonePoses: X=9.708 Y=-2.591 Z=100.639,
+          PlayerBonePoses: X=12.565 Y=-2.380 Z=6.569,
+          PlayerBonePoses: X=12.654 Y=-2.327 Z=5.480,
+          PlayerBonePoses: X=10.791 Y=-2.593 Z=8.343,
+          PlayerBonePoses: X=12.193 Y=-2.454 Z=5.756,
+          PlayerBonePoses: X=11.508 Y=-2.378 Z=5.232,
+          结论：有几度的偏差
         2.mpu运动，复位
-        PlayerBonePoses: X=0.094 Y=0.954 Z=16.275
-        PlayerBonePoses: X=0.041 Y=0.961 Z=21.608
-        PlayerBonePoses: X=0.025 Y=0.852 Z=16.514
-        结论：有几度的偏差，整体效果不错
-
+          PlayerBonePoses: X=0.094 Y=0.954 Z=16.275
+          PlayerBonePoses: X=0.041 Y=0.961 Z=21.608
+          PlayerBonePoses: X=0.025 Y=0.852 Z=16.514
+          结论：有几度的偏差，整体效果不错
 
     3.新方向：
         1.测试kalman滤波
         2.将gyro scale降低为500，看看能不能减小误差
-
-
 
 ##2019.7.28
     1.网上找的其他算法没移植成功，今天测了mpu9轴自带的9轴融合算法，感觉效果还不错。
