@@ -6,7 +6,7 @@
         1.移植Risk的mpu9250AHRS代码，然后测试精准度
         2.移植Madgwick算法到MPU6050+HMC5883l上，测试精准度（使用dmp的数据、不使用dmp）
         3.测试ICM-20948传感器（使用自带的算法）
-        4.从MPU9250+自带算法，MPU9250+Madgwick算法，MPU6050+HMC5883l+Madgwick算法，ICM-20948+自带算法，选出一个解决方案（如果没有合适的，再试试MPU6050+HMC5883l+kalman算法）
+        4.从MPU9250+自带算法，MPU6050+HMC5883l+自带算法，MPU9250+Madgwick算法，MPU6050+HMC5883l+Madgwick算法，ICM-20948+自带算法，选出一个解决方案（如果没有合适的，再试试MPU6050+HMC5883l+kalman算法,MPU9250+kalman算法）
 
     3.标准：
     TODO
