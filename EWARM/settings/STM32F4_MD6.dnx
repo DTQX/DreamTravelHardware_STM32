@@ -157,11 +157,10 @@
     </DisassembleMode>
     <Breakpoints2>
         <Bp0>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\User\src\fusion.c}.105.13" 0 0 1 "" 0 "" 0</Bp0>
-        <Bp1>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\User\src\fusion.c}.120.11" 0 0 1 "" 0 "" 0</Bp1>
-        <Bp2>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\User\src\main.c}.196.5" 0 0 1 "" 0 "" 0</Bp2>
-        <Bp3>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\User\src\main.c}.673.9" 0 0 1 "" 0 "" 0</Bp3>
-        <Bp4>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\User\src\main.c}.739.13" 0 0 1 "" 0 "" 0</Bp4>
-        <Count>5</Count>
+        <Bp1>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\User\src\fusion.c}.114.13" 0 0 1 "" 0 "" 0</Bp1>
+        <Bp2>_ 0 "EMUL_CODE" "{$PROJ_DIR$\..\User\src\main.c}.194.5" 0 0 1 "" 0 "" 0</Bp2>
+        <Bp3>_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\User\src\main.c}.603.13" 0 0 1 "" 0 "" 0</Bp3>
+        <Count>4</Count>
     </Breakpoints2>
     <Aliases>
         <A0>_ "C:\STM32_EWARM\STM32L_MPLLIB\mpl\accel_auto_cal.c" ""</A0>
