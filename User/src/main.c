@@ -59,12 +59,12 @@ volatile uint32_t hal_timestamp = 0;
 #define PEDO_READ_MS    (1000)
 #define TEMP_READ_MS    (500)
 // #define COMPASS_READ_MS (100)
-#define COMPASS_READ_MS (10)
+#define COMPASS_READ_MS (100)
 
 // other_fusion
 float ax, ay, az, gx, gy, gz, mx, my, mz; // variables to hold latest sensor data values 
-float aRes = 1.0/32768.0, gRes = 1.0/32768.0, mRes = 1.0/32768.0; // scale resolutions per LSB for the sensors
-// float aRes = 2.0/32768.0, gRes = 2000.0/32768.0, mRes = 1.0/32768.0; // scale resolutions per LSB for the sensors
+// float aRes = 1.0/32768.0, gRes = 1.0/32768.0, mRes = 1.0/32768.0; // scale resolutions per LSB for the sensors
+float aRes = 2.0/32768.0, gRes = 2000.0/32768.0, mRes = 1.0/32768.0; // scale resolutions per LSB for the sensors
 // float aRes = 2.0/16358.0, gRes = 2000.0/16358.0, mRes = 1.0/16358.0; // scale resolutions per LSB for the sensors
 long accelCount[3];  // Stores the 16-bit signed accelerometer sensor output
 long gyroCount[3];   // Stores the 16-bit signed gyro sensor output
@@ -865,15 +865,15 @@ int main(void)
 
         // 其他融合算法
             // 给其他算法添加值
-            int8_t accuracy;
-            unsigned long tmp_timestamp;
+        //     int8_t accuracy;
+        //     unsigned long tmp_timestamp;
 
-            inv_get_sensor_type_accel(accelCount, &accuracy, (inv_time_t*)&tmp_timestamp);
-            inv_get_sensor_type_gyro(gyroCount, &accuracy, (inv_time_t*)&tmp_timestamp);
+        //     inv_get_sensor_type_accel(accelCount, &accuracy, (inv_time_t*)&tmp_timestamp);
+        //     inv_get_sensor_type_gyro(gyroCount, &accuracy, (inv_time_t*)&tmp_timestamp);
             
-        #ifdef COMPASS_ENABLED
-            inv_get_sensor_type_compass(magCount, &accuracy,(inv_time_t*)&tmp_timestamp);
-        #endif
+        // #ifdef COMPASS_ENABLED
+        //     inv_get_sensor_type_compass(magCount, &accuracy,(inv_time_t*)&tmp_timestamp);
+        // #endif
             // accelCount[0] = accelCount[0] >> 15;
             // accelCount[1] = accelCount[1] >> 15;
             // accelCount[2] = accelCount[2] >> 15;

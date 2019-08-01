@@ -1,3 +1,38 @@
+
+##2019.7.30
+    1.一个发现，今早在跑官方代码看罗盘数据时，发现，绕Z旋转一圈的罗盘数据：0~50。这解释了使用madgwick时，绕z旋转90度，实际只偏移了20度。（50/360约等于20/90）
+
+
+    2.代办：
+        1.自带算法是否满足精度需求？抖动绕z误差15度，复位绕z误差5度。
+        2.尝试使用3方罗盘，比较ak89xx、L883（While trying the sensors as a compass, we realised that the 9150 was very noisy and varied between -2 and 2 degrees about a mean value while the hmc was more stable and varied between -0.5 to 0.5 from its mean value. ）
+
+
+
+    mpu选择
+        1.
+        I do like the MPU-6050. Why ? Because it has Accel/Gyro arriving at pretty much the same rate, which can be up to 1000Hz.
+
+        I do NOT like the MPU-9150 to much. The embedded AK8975 is 2.5x less accurate/precises than a HMC5883L/HMC5983 (which can give you 0.5 degrees). For dead reckoning that may be an issue. For me it is as while the rover is stationary the heading will be derived from the magnetometer.
+
+        I do NOT like the MPU-9250 at all. The AK8963 is somewhat better, but still sucks in terms of resolution. I believe 1.5 degrees should be possible with it, but it's rather noisy ... The Accel/Gyro look good on paper, except that they now take insanely long for filtering. Hence you needed to do that on the host again ... So no advantage over the MPU-6050/MPU-9150 combo.
+
+        I do NOT like the ST based products up to the latest generation (the ones they announced, but not ship yet). With a LGD20H/LSM303D (like the Pololu IMUs) or the LSM9DS0 Accel and Gyro have different rates, which makes the effective rate you can get into an EKF or DCM really only 400Hz (2 times oversampling). Even worse, ST does not specify the delay their lowpass/highpass filters cause. That effect of the delay was something observable for me with the MPU-6050 if cranked up all the way into the 10ms range.
+
+        Personally I am back to a GY-86/GY-87 setup (MPU-6050+HMC5883L, BMP180 or MS5611), or simply using a RY835AI GPS/IMU combo. Latter one includes a NEO-M8N GPS/GLONASS setup with a 35mm passive patch antenna, MPU-6050+HMC5983 and a BMP180, all for $50.
+
+        The newer IMUs (MPU-9250, LSM303C, LSM9D1 and such) kind of suck on the magnetometer side as they are build for being put into cell-phones where there are possible huge magnetic distortions. So they have a bigger range there, but less precision. Also they tend to have a bigger focus on size and power consumption, with the end result that built in filtering is slower. Thus the older generation parts might be actually more accurate/precise overall.
+    HMC5883L：
+        1.12-Bit ADC Coupled with Low Noise AMR Sensors Achieves 2 milli-gauss Field Resolution in ±8 Gauss Fields.
+    AK8975A :
+        The resolution of the magnetometer is +/- 3 milliGauss with a full-scale range of +/- 12 Gauss. 
+    LSM9DS0:
+        The magnetometer in the LSM9DS0 offers several output data rates from 3 to 100 Hz and excellent resolution at +/-80 microGauss with a full-scale range up to +/-12 Gauss.
+    AK8963:
+        allows continuous data output at either 8 or 100 Hz rates and +/-1.5 milliGauss resolution with full-scale range of +/- 48 Gauss, 
+    Kris测试：
+        mpu9250的效果要比其他的传感器（LSM9DS0）好
+
 ##2019.7.29
     1.测试
         1.晃动测试，自带算法很快稳定，Madgwick稳定的慢（考虑是不是delta设置有问题）
